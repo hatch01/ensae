@@ -27,5 +27,10 @@ class Test_Solver(unittest.TestCase):
         solution = Solver.get_solution(grid)
         self.assertTrue(grid.is_sorted())
 
+    def test_solver_bfs(self):
+        grid = Grid.grid_from_file("input/grid0.in")
+        solution = Solver.get_bfs_solution(grid)
+        self.assertTrue(grid.is_sorted())
+
 if __name__ == '__main__':
     unittest.main()

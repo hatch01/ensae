@@ -4,6 +4,8 @@ This is the grid module. It contains the Grid class and its associated methods.
 
 import random
 from matplotlib import pyplot as plt
+from itertools import permutations
+from graph import Graph
 
 class Grid():
     """
@@ -157,3 +159,27 @@ class Grid():
         m = len(content)
         n = len(content[0])
         return Grid(m, n, content)
+    
+    def generate_all_possible_grid(self) -> Graph:
+        """
+        Generates all possible grids that can be obtained from the current grid.
+        """
+        # generate all possible grids with content 1,2,3,4,5,6,7,8,...
+        grids = []
+        items = list(range(1, self.m*self.n+1))
+        for p in permutations(items):
+            grids.append(Grid(self.m, self.n, [list(p[i*self.n:(i+1)*self.n]) for i in range(self.m)]))
+        
+        # create a graph with all the possible grids
+        graph = Graph([grid.to_hashable() for grid in grids])
+
+        # add edges between the grids that can be obtained from each other by a single swap
+        for i in range(len(grids)): # pour toute les grilles
+            for line in range(self.m): # pour toute les lignes
+                for column in range(self.n): # pour toute les colonnes
+                    for line_add, column_add in [(0, 1), (1, 0), (-1, 0), (0, -1)]: # pour toute les operation possible
+                        if 0 <= line+line_add < self.m and 0 <= column+column_add < self.n: # si la case est dans la grille
+                            hashable = grids[i].to_hashable()
+                            grids[i].swap((line, column), (line+line_add, column+column_add))
+                            graph.add_edge(hashable, grids[i].to_hashable())
+        return graph

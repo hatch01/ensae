@@ -6,7 +6,7 @@ class Solver():
     """
 
     @staticmethod
-    def get_solution(grid: Grid) -> list:
+    def get_naive_solution(grid: Grid) -> list:
         """
         Solves the grid and returns the sequence of swaps at the format complexité O((n*m)^2)
         [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...]. 
@@ -53,3 +53,58 @@ class Solver():
                     grid.swap((i_min, j_min), (i_min, j_min+1))
                     retour.append(((i_min, j_min), (i_min, j_min+1)))
         return retour
+    
+    @staticmethod
+    def get_bfs_solution(grid: Grid) -> list:
+        """
+        Solves the grid and returns the sequence of swaps at the format complexité O(n*m)
+        [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...]. 
+
+        Parameters:
+        -----------
+        grid: Grid
+            The grid to solve.
+
+        Returns:
+        --------
+        list
+            A list of swaps, each swap being a tuple of two cells (each cell being a tuple of integers). 
+            So the format should be [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...].
+        """
+        graph = grid.generate_all_possible_grid()
+        src = grid.to_hashable()
+        dst = Grid(grid.m, grid.n).to_hashable()
+        path = graph.bfs(src, dst)
+        solution = Solver.path_to_swaps(path)
+        grid.swap_seq(solution)
+        return solution 
+
+
+    @staticmethod
+    def path_to_swaps(path: list) -> list:
+        """
+        Transforms a path from the bfs method to a sequence of swaps. 
+
+        Parameters:
+        -----------
+        path: list
+            A list of nodes from the bfs method.
+
+        Returns:
+        --------
+        list
+            A list of swaps, each swap being a tuple of two cells (each cell being a tuple of integers). 
+            So the format should be [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...].
+        """
+        solution = []
+        for i in range(1, len(path)): # pour chaque element du chemin en partant du deuxieme
+            for line in range(len(path[i])): # pour chaque ligne
+                for column in range(len(path[i][0])): # pour chaque colonne
+                    if path[i][line][column] != path[i-1][line][column]: # si la case a changé
+                        # on cherche la case qui a changé
+                        for dest_line in range(len(path[i])): # pour chaque ligne
+                            for dest_column in range(len(path[i][0])): # pour chaque colonne
+                                if path[i][line][column] == path[i-1][dest_line][dest_column]: # on a trouvé la case qui a changé
+                                    if not ((dest_line, dest_column), (line, column)) in solution: # si le swap n'est pas déjà dans la solution
+                                        solution.append(((line, column), (dest_line, dest_column))) # on sauvegarde le swap
+        return solution
