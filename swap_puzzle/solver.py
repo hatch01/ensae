@@ -4,45 +4,52 @@ class Solver():
     """
     A solver class, to be implemented.
     """
-    @staticmethod
-    def get_cell(grid, k):
-        for i in range(0, grid.n):
-            for j in range(0, grid.m):
-                if grid.state[i][j] == k:
-                    return (i, j)
-
-    def swap_gauche(grid):
-        i0, j0 = Solver.get_cell(grid, k)
-        for j in range(0, i0):
-            cell1 = grid.state[i][j]
-            cell2 = grid.state[i-1][j]
-            while j > k-i*n-1:
-                swap(grid, cell1, cell2)
 
     @staticmethod
-    def get_solution(grid):
-        m = grid.m
-        n = grid.n
-        # Dans cette partie, on cherche les coordonnées de chaque numéro entre 1 et n*m
-        for k in range(1, m*n+1):
-            i0, j0 = Solver.get_cell(grid, k)
-                return (i0, j0)
-            
-    @staticmethod
-    def go_cell(grid, k):        
-        j == k-i*grid.n-1
-        i == (1/n)*(k-j-1)
-
-    
-            
-
+    def get_solution(grid: Grid) -> list:
         """
-        Solves the grid and returns the sequence of swaps at the format 
+        Solves the grid and returns the sequence of swaps at the format complexité O((n*m)^2)
         [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...]. 
+
+        Parameters:
+        -----------
+        grid: Grid
+            The grid to solve.
+
+        Returns:
+        --------
+        list
+            A list of swaps, each swap being a tuple of two cells (each cell being a tuple of integers). 
+            So the format should be [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...].
         """
-       
 
-        # TODO: implement this function (and remove the line "raise NotImplementedError").
-        # NOTE: you can add other methods and subclasses as much as necessary. The only thing imposed is the format of the solution returned.
-        raise NotImplementedError
+        retour = []
+        while not grid.is_sorted():
+            # on commence par chercher les coordonnées du minimum pas a ca place
+            minimum = grid.state[-1][-1]
+            i_min = grid.m-1
+            j_min = grid.n-1
+            for i in range(grid.m):
+                for j in range(grid.n):
+                    if grid.state[i][j] < minimum and grid.state[i][j] != i*grid.n+j+1:
+                        minimum = grid.state[i][j]
+                        i_min = i
+                        j_min = j
 
+            ligne_visee = (minimum-1)//grid.n
+            colonne_visee = (minimum-1)%grid.n
+            if i_min != ligne_visee: # si on es pas sur la bonne ligne
+                if i_min > ligne_visee: # si on es trop bas
+                    grid.swap((i_min, j_min), (i_min-1, j_min))
+                    retour.append(((i_min, j_min), (i_min-1, j_min)))
+                else: # sinon on es trop haut
+                    grid.swap((i_min, j_min), (i_min+1, j_min))
+                    retour.append(((i_min, j_min), (i_min+1, j_min)))
+            else: # sinon on est sur le bonne ligne
+                if j_min > colonne_visee: # il faut aller a gauche
+                    grid.swap((i_min, j_min), (i_min, j_min-1))
+                    retour.append(((i_min, j_min), (i_min, j_min-1)))
+                else: # sinon il faut aller a droite
+                    grid.swap((i_min, j_min), (i_min, j_min+1))
+                    retour.append(((i_min, j_min), (i_min, j_min+1)))
+        return retour
