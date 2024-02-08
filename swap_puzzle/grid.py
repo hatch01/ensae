@@ -2,7 +2,6 @@
 This is the grid module. It contains the Grid class and its associated methods.
 """
 
-import random
 from matplotlib import pyplot as plt
 from itertools import permutations
 from graph import Graph
@@ -183,3 +182,19 @@ class Grid():
                             grids[i].swap((line, column), (line+line_add, column+column_add))
                             graph.add_edge(hashable, grids[i].to_hashable())
         return graph
+    
+    def generate_neighbours(self) -> list:
+        """
+        Generates the neighbours of the grid. 
+        """
+        result = []
+        for line in range(self.m):
+            for column in range(self.n):
+                for line_add, column_add in [(0, 1), (1, 0), (-1, 0), (0, -1)]:
+                    if 0 <= line+line_add < self.m and 0 <= column+column_add < self.n:
+                        new_grid = Grid(self.m, self.n, [list(row) for row in self.state])
+                        new_grid.swap((line, column), (line+line_add, column+column_add))
+                        new_grid_hashable = new_grid.to_hashable()
+                        if new_grid_hashable not in result:
+                            result.append(new_grid_hashable)
+        return result

@@ -1,4 +1,5 @@
 from grid import Grid
+import graph
 
 class Solver(): 
     """
@@ -71,10 +72,34 @@ class Solver():
             A list of swaps, each swap being a tuple of two cells (each cell being a tuple of integers). 
             So the format should be [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...].
         """
-        graph = grid.generate_all_possible_grid()
+        possible_graph = grid.generate_all_possible_grid()
         src = grid.to_hashable()
         dst = Grid(grid.m, grid.n).to_hashable()
-        path = graph.bfs(src, dst)
+        path = possible_graph.bfs(src, dst)
+        solution = Solver.path_to_swaps(path)
+        grid.swap_seq(solution)
+        return solution 
+    
+    def get_bfs_optimized_solution(grid: Grid) -> list:
+        """
+        Solves the grid and returns the sequence of swaps at the format complexité O(n*m)
+        [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...]. 
+
+        Parameters:
+        -----------
+        grid: Grid
+            The grid to solve.
+
+        Returns:
+        --------
+        list
+            A list of swaps, each swap being a tuple of two cells (each cell being a tuple of integers). 
+            So the format should be [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...].
+        """
+        src = grid.to_hashable()
+        dst = Grid(grid.m, grid.n).to_hashable()
+        search_graph = graph.Graph([src, dst])
+        path = search_graph.bfs(src, dst, True)
         solution = Solver.path_to_swaps(path)
         grid.swap_seq(solution)
         return solution 

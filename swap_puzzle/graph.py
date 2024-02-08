@@ -3,6 +3,7 @@ This is the graph module. It contains a minimalistic Graph class.
 """
 
 from collections import deque
+import grid
 
 class Graph:
     """
@@ -83,7 +84,7 @@ class Graph:
         self.nb_edges += 1
         self.edges.append((node1, node2))
 
-    def bfs(self, src, dst): 
+    def bfs(self, src, dst, generate = False): 
         """
         Finds a shortest path from src to dst by BFS.  
 
@@ -108,7 +109,11 @@ class Graph:
             path = f.popleft()
             node = path[-1]
             if node not in visited:
-                for t in self.graph[node]:
+                neighbours = self.graph.get(node, None)
+                if generate:
+                    neighbours = grid.Grid.from_hashable(node).generate_neighbours()
+                    self.add_childrens(node, neighbours)
+                for t in neighbours:
                     new_path = list(path)
                     new_path.append(t)
                     f.append(new_path)
@@ -151,3 +156,9 @@ class Graph:
                     raise Exception("Format incorrect")
         return graph
 
+    def add_childrens(self, parent, list: list):
+        """
+        Generates graph of the grid obtained by swapping two adjacent cells.
+        """
+        for i in list:
+            self.add_edge(parent, i)
