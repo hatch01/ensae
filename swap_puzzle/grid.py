@@ -142,3 +142,18 @@ class Grid():
                 ax.text(j, i, str(self.state[i][j]), va='center', ha='center')
         plt.show()
 
+    def to_hashable(self):
+        """
+        Returns a hashable representation of the grid. 
+        """
+        return tuple([tuple(line) for line in self.state])
+
+    @staticmethod
+    def from_hashable(hashable_state: tuple):
+        """
+        Convert a hashable grid state (tuple of tuples) to a list of lists.
+        """
+        content = [list(row) for row in hashable_state]
+        m = len(content)
+        n = len(content[0])
+        return Grid(m, n, content)
