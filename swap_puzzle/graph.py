@@ -2,6 +2,8 @@
 This is the graph module. It contains a minimalistic Graph class.
 """
 
+from collections import deque
+
 class Graph:
     """
     A class representing undirected graphs as adjacency lists. 
@@ -97,8 +99,25 @@ class Graph:
         path: list[NodeType] | None
             The shortest path from src to dst. Returns None if dst is not reachable from src
         """ 
-        # TODO: implement this function (and remove the line "raise NotImplementedError").
-        raise NotImplementedError
+        if src == dst:
+            return [src]
+        f = deque()
+        f.append([src])
+        visited = []
+        while f:
+            path = f.popleft()
+            node = path[-1]
+            if node not in visited:
+                for t in self.graph[node]:
+                    new_path = list(path)
+                    new_path.append(t)
+                    f.append(new_path)
+                    if t == dst:
+                        return new_path
+                visited.append(node)
+        return 
+                    
+        
 
     @classmethod
     def graph_from_file(cls, file_name):
