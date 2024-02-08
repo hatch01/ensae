@@ -35,7 +35,7 @@ class Grid():
         self.m = m
         self.n = n
         if not initial_state:
-            initial_state = [list(range(i*n+1, (i+1)*n+1)) for i in range(m)]            
+            initial_state = [list(range(i*n+1, (i+1)*n+1)) for i in range(m)]
         self.state = initial_state
 
     def __str__(self): 
@@ -65,10 +65,9 @@ class Grid():
             L = L + self.state[i]
         for k in range(len(L)-1):
             if L[k] > L[k+1]:
-                return (False)
+                return False
         return True
 
-        # [1,2,3,4]
     def swap(self, cell1, cell2):
         """
         Implements the swap operation between two cells. Raises an exception if the swap is not allowed.
@@ -78,20 +77,16 @@ class Grid():
         cell1, cell2: tuple[int]
             The two cells to swap. They must be in the format (i, j) where i is the line and j the column number of the cell. 
         """
-        corcas1 = [cell1[0], cell1[1]]
-        corcas2 = [cell2[0], cell2[1]]
         if cell1[0] == cell2[0]:
             if cell1[1] == cell2[1] or cell1[1] == cell2[1]+1 or cell1[1] == cell2[1]-1:
-                self.state[cell1[0]][cell1[1]] = self.state[corcas2[0]][corcas2[1]]
-                self.state[cell2[0]][cell2[1]] = self.state[corcas1[0]][corcas1[1]]
+                self.state[cell1[0]][cell1[1]], self.state[cell2[0]][cell2[1]] = self.state[cell2[0]][cell2[1]], self.state[cell1[0]][cell1[1]]
         elif cell1[1] == cell2[1]:
             if cell1[0] == cell2[0] or cell1[0] == cell2[0]+1 or cell1[0] == cell2[0]-1:
-                self.state[cell1[0]][cell1[1]] = self.state[corcas2[0]][corcas2[1]]
-                self.state[cell2[0]][cell2[1]] = self.state[corcas1[0]][corcas1[1]]
+                self.state[cell1[0]][cell1[1]], self.state[cell2[0]][cell2[1]] = self.state[cell2[0]][cell2[1]], self.state[cell1[0]][cell1[1]]
         else:
-            raise ValueError
+            raise Exception(f"Cells {cell1} and {cell2} are not adjacent and cannot be swapped.")
 
-       
+
         """
         Executes a sequence of swaps. 
 
