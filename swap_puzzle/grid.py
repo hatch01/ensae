@@ -99,7 +99,7 @@ class Grid():
        
     def swap_seq(self, cell_pair_list):
         for k in range(len(cell_pair_list)):
-            swap(cell_pair_list[k][0], cell_pair_list[k][1])
+            self.swap(cell_pair_list[k][0], cell_pair_list[k][1])
 
 
     @classmethod
