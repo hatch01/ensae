@@ -3,6 +3,7 @@ This is the grid module. It contains the Grid class and its associated methods.
 """
 
 import random
+from matplotlib import pyplot as plt
 
 class Grid():
     """
@@ -130,4 +131,14 @@ class Grid():
             grid = Grid(m, n, initial_state)
         return grid
 
+    def display(self):
+        """
+        Displays the grid using matplotlib
+        """
+        _, ax = plt.subplots()
+        ax.matshow(self.state, cmap='viridis')
+        for i in range(self.m):
+            for j in range(self.n):
+                ax.text(j, i, str(self.state[i][j]), va='center', ha='center')
+        plt.show()
 
